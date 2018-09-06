@@ -21,8 +21,6 @@ import {where} from "mocha-where"
 
 describe("TestSetup", () => {
 
-    afterEach(teardown)
-
     describe("selects from the subject template", () => {
 
         it("a single element", () => {
@@ -434,35 +432,45 @@ describe("TestSetup", () => {
         ["subjectElement", subjectElement],
         ["fixture",        fixture       ],
     ]).it("#name() throws an exception when used before a test has begun", (scenario: any) => {
+        teardown()
         expect(scenario.method).to.throw("You must first start a test using .begin() before using this method")
     })
 
-    it("testComponent() throws an exception when a test is in progress", () => {
-        @Component({selector: "test-component", template: ""})
-        class SubjectComponent {}
+    // it("testComponent() throws resets tests in progress", () => {
+    //     @Component({selector: "test-component", template: ""})
+    //     class SubjectComponent {}
 
-        testComponent(SubjectComponent).begin()
+    //     testComponent(SubjectComponent).begin()
 
-        expect(() => testComponent(SubjectComponent)).to.throw("You cannot configure a test while a test already is in progress")
-    })
+    //     expect(() => {
+    //         testComponent(SubjectComponent).begin()
+    //         teardown()
+    //     }).to.not.throw()
+    // })
 
-    where([
-        ["method"   ],
-        ["setInput" ],
-        ["onOutput" ],
-        ["import"   ],
-        ["providers"],
-        ["use"      ],
-        ["mock"     ],
-        ["setupMock"],
-    ]).it("TestBuilder.#method() throws an exception when a test is in progress", (scenario: any) => {
-        @Component({selector: "test-component", template: ""})
-        class SubjectComponent {}
+    describe('', () => {
 
-        const builder = testComponent(SubjectComponent)
-        builder.begin()
+        afterEach(teardown)
 
-        expect(builder[scenario.method].bind(builder)).to.throw("You cannot configure a test while a test already is in progress")
+        where([
+            ["method"   ],
+            ["setInput" ],
+            ["onOutput" ],
+            ["import"   ],
+            ["providers"],
+            ["use"      ],
+            ["mock"     ],
+            ["setupMock"],
+        ]).it("TestBuilder.#method() throws an exception when a test is in progress", (scenario: any) => {
+            @Component({selector: "test-component", template: ""})
+            class SubjectComponent {}
+
+            const builder = testComponent(SubjectComponent)
+            builder.begin()
+
+            expect(builder[scenario.method].bind(builder)).to.throw("You cannot configure a test while a test already is in progress")
+        })
+
     })
 
     it("throw an exception when the user attempts to mock something that isn't a Component", () => {

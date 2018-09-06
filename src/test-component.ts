@@ -49,7 +49,10 @@ export function fixture(): ComponentFixture<any> {
     return _fixture!
 }
 
-export const testComponent = <T>(subject: Type<T>) => new TestBuilder(subject)
+export const testComponent = <T>(subject: Type<T>) => {
+    teardown()
+    return new TestBuilder(subject)
+}
 
 export class TestBuilder<T> {
     private _providers: any[] = []
